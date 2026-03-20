@@ -21,9 +21,8 @@ public class MensagemRepository : IMensagemRepository
     {
         return await _context.Mensagens
             .Where(m => m.Solicitacao.Protocolo == protocolo)
-            .OrderBy(m => m.DataCriacao)
-            .OrderDescending()
+            .OrderByDescending(m => m.DataCriacao)
             .AsNoTracking()
             .ToListAsync(cancellationToken: cancellationToken);
     }
-}
+}           

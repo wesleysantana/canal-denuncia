@@ -39,16 +39,21 @@ public sealed class AnexoStorageService : IAnexoStorageService
 
         var fullPath = Path.Combine(dir, fileName);
 
-        byte[] originalBytes;
-        await using (var ms = new MemoryStream())
-        {
-            await file.CopyToAsync(ms, ct);
-            originalBytes = ms.ToArray();
-        }
+        await using var inputStream = file.OpenReadStream();
+        await using var outputFileStream = new FileStream(
+            fullPath,
+            FileMode.Create,
+            FileAccess.Write,
+            FileShare.None,
+            bufferSize: 81920,
+            useAsync: true);
 
-        var compressed = CompressGzip(originalBytes);
+        await using var gzipStream = new GZipStream(
+            outputFileStream,
+            CompressionLevel.Optimal,
+            leaveOpen: false);
 
-        await File.WriteAllBytesAsync(fullPath, compressed, ct);
+        await inputStream.CopyToAsync(gzipStream, 81920, ct);
 
         return fileName;
     }
@@ -96,36 +101,19 @@ public sealed class AnexoStorageService : IAnexoStorageService
         if (!File.Exists(fullPath))
             throw new FileNotFoundException("Arquivo não encontrado.", safeName);
 
-        // Stream do arquivo armazenado (gzip)
-        var fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var fileStream = new FileStream(
+            fullPath,
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.Read,
+            bufferSize: 81920,
+            useAsync: true
+        );
 
-        // Se Compactado = true, devolve stream descompactado; senão devolve o arquivo puro
         Stream result = decompress
             ? new GZipStream(fileStream, CompressionMode.Decompress, leaveOpen: false)
             : fileStream;
 
         return Task.FromResult(result);
-    }
-
-    private static byte[] CompressGzip(byte[] bytes)
-    {
-        using var input = new MemoryStream(bytes);
-        using var output = new MemoryStream();
-
-        using (var gzip = new GZipStream(output, CompressionMode.Compress, leaveOpen: true))
-        {
-            input.CopyTo(gzip);
-        }
-
-        return output.ToArray();
-    }
-
-    public static byte[] DecompressGzip(byte[] bytes)
-    {
-        using var input = new MemoryStream(bytes);
-        using var gzip = new GZipStream(input, CompressionMode.Decompress);
-        using var output = new MemoryStream();
-        gzip.CopyTo(output);
-        return output.ToArray();
     }
 }

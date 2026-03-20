@@ -22,6 +22,6 @@ public class Configuration
 
         // Keycloak Authentication & Authorization
         service.AddKeycloakWebApiAuthentication(configuration.GetSection("KeyCloak"));
-        service.AddAuthorization().AddKeycloakAuthorization(configuration).AddAuthorizationServer(configuration);
+        service.AddKeycloakAuthorization(configuration).AddAuthorizationServer(configuration);
     }
 }

@@ -34,8 +34,8 @@ public class MensagemService : IMensagemService
     {
         try
         {
-            var solicitacao = _solicitacaoRepository
-                .ObterSolicitacaoPorProtocoloAsync(msgRequest.Protocolo, cancellationToken).Result;
+            var solicitacao = await _solicitacaoRepository
+                .ObterSolicitacaoPorProtocoloAsync(msgRequest.Protocolo, cancellationToken);
 
             if (solicitacao is null)
                 return Result<string>.Failure(new ErrorDto(
