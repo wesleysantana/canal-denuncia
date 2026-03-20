@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="CanalDenuncias.API/CanalDenuncias.API.csproj" Id="bb2dbbde-ff4b-4854-8282-1a4fa64a8274" />
+  <Project Path="CanalDenuncias.Application/CanalDenuncias.Application.csproj" Id="b973ca72-88bf-484d-9130-1ecd15b23b96" />
+  <Project Path="CanalDenuncias.Domain/CanalDenuncias.Domain.csproj" Id="781d4d3e-0ef9-429e-80e9-78b9cf272d2c" />
+  <Project Path="CanalDenuncias.Infra/CanalDenuncias.Infra.csproj" Id="2dd3afb4-3ffa-474b-a745-677d3e4685cc" />
+  <Project Path="CanalDenuncias.Tests/CanalDenuncias.Tests.csproj" Id="67a65fb1-b4af-4d4b-92e1-c3da5967b0e1" />
+</Solution>
